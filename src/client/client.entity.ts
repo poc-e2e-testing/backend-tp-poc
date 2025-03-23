@@ -1,6 +1,7 @@
-import { Entity, Property, ManyToOne, Rel, Ref} from '@mikro-orm/core';
+import { Entity, Property, ManyToOne, Rel, Ref, BeforeCreate} from '@mikro-orm/core';
 import { BaseEntity } from '../shared/db/baseEntity.entity.js';
 import { ClientClass } from './clientClass.entity.js';
+import bcrypt from 'bcryptjs';
 @Entity()
 export class Client extends BaseEntity{
          @Property({nullable: false})
@@ -32,6 +33,14 @@ export class Client extends BaseEntity{
 
          @Property({nullable: false})
          dni!: string
+
+         @Property({ nullable: false, hidden: false })
+         password!: string; // Password
+
+         @BeforeCreate()
+         async hashPassword() {
+           this.password = await bcrypt.hash(this.password, 10);
+         }
 
          @ManyToOne (() => ClientClass, {nullable: false})
          clientClass!: Rel<ClientClass>

@@ -1,5 +1,7 @@
 import { MikroORM } from "@mikro-orm/core";
 import { MongoHighlighter } from "@mikro-orm/mongo-highlighter";
+import { MongoEntityManager } from '@mikro-orm/mongodb';
+import { Client } from "../../client/client.entity.js";
 
 
 export const orm = await MikroORM.init({
@@ -26,4 +28,7 @@ export const syncSchema = async () => {
     */
     await generator.updateSchema()
 }
-
+export const DI = {
+  em: orm.em as MongoEntityManager,
+  clientRepository: orm.em.getRepository(Client),
+};

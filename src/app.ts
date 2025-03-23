@@ -5,6 +5,7 @@ import { productRouter } from './product/product.routes.js';
 import { clientClassRouter } from './client/clientClass.routes.js';
 import { productBrandRouter } from './product/productBrand.routes.js';
 import { productClassRouter } from './product/productClass.routes.js';
+import authRoutes from './auth/auth.routes.js';
 import {orm, syncSchema} from './shared/db/orm.js';
 import { RequestContext } from '@mikro-orm/core';
 import cors from 'cors';
@@ -28,6 +29,7 @@ app.use('/api/clients', clientRouter);
 app.use('/api/client/classes', clientClassRouter);
 app.use('/api/products', productRouter);
 app.use('/api/product/brands', productBrandRouter);
+app.use('/api/auth', authRoutes);
 app.use('/api/product/classes', productClassRouter);
 
 app.use((_, res) => {
