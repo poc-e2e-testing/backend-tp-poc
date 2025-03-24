@@ -13,7 +13,7 @@ export class Client extends BaseEntity{
          @Property({nullable: false})
          birthdate!: Date
          
-         @Property({nullable: false})
+         @Property({nullable: false, unique: true})
          email!: string
 
          @Property({nullable: false})
@@ -34,7 +34,7 @@ export class Client extends BaseEntity{
          @Property({nullable: false})
          dni!: string
 
-         @Property({ nullable: false, hidden: false })
+         @Property({ nullable: false, hidden: true })
          password!: string; // Password
 
          @BeforeCreate()

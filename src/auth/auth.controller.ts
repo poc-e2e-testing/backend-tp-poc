@@ -43,3 +43,27 @@ export const login = async (req: Request, res: Response) => {
     return res.status(500).json({ message: 'Error del servidor' });
   }
 };
+export const me = async (req: Request, res: Response) => {
+  const { id } = (req as any).user;
+
+  try {
+    const client = await DI.clientRepository.findOne({ id });
+
+    if (!client) {
+      return res.status(404).json({ message: 'Cliente no encontrado' });
+    }
+
+    return res.status(200).json({
+      message: 'Perfil autenticado',
+      user: {
+        id: client.id,
+        name: client.name,
+        lastname: client.lastname,
+        email: client.email,
+      },
+    });
+  } catch (error) {
+    console.error('Error en /me:', error);
+    return res.status(500).json({ message: 'Error al obtener perfil' });
+  }
+};

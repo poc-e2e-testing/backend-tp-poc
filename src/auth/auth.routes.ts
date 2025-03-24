@@ -1,12 +1,12 @@
 import { Router, Request, Response } from 'express';
-import { login } from './auth.controller.js';
+import { login,me } from './auth.controller.js';
 import { verifyToken } from './auth.middleware.js';
 
 const router = Router();
 
 // 🔐 Ruta de login
 router.post('/login', login);
-
+router.get('/me', verifyToken, me);
 // 🛡️ Ruta protegida para obtener info del usuario autenticado
 router.get('/me', verifyToken, async (req: Request, res: Response) => {
   try {

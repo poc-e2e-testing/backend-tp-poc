@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { Client } from './client.entity.js';
 import { orm } from '../shared/db/orm.js';
 import { DI } from '../shared/db/orm.js';
+import bcrypt from 'bcryptjs';
 
 
 const em = orm.em;
@@ -57,6 +58,12 @@ async function add(req: Request, res: Response) {
   try {
     const data = req.body.sanitizedInput || req.body;
 
+    // ✅ Validar email único
+    const existing = await DI.clientRepository.findOne({ email: data.email });
+    if (existing) {
+      return res.status(400).json({ message: 'Este email ya está registrado' });
+    }
+
     const client = new Client();
     client.name = data.name;
     client.lastname = data.lastname;
@@ -68,9 +75,7 @@ async function add(req: Request, res: Response) {
     client.country = data.country;
     client.postalCode = data.postalCode;
     client.dni = data.dni;
-    client.password = data.password;
-
-    // Asociar clientClass (por id)
+    client.password = await bcrypt.hash(data.password, 10);
     client.clientClass = await DI.em.findOneOrFail('ClientClass', data.clientClass);
 
     await DI.em.persistAndFlush(client);
@@ -87,7 +92,8 @@ async function add(req: Request, res: Response) {
     console.error('Error al crear cliente:', error);
     return res.status(500).json({ message: 'Error del servidor al crear cliente' });
   }
-};
+}
+
 
 async function update(req: Request, res: Response) {
   try {
