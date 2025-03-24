@@ -9,6 +9,7 @@ import authRoutes from './auth/auth.routes.js';
 import {orm, syncSchema} from './shared/db/orm.js';
 import { RequestContext } from '@mikro-orm/core';
 import cors from 'cors';
+import mailRouter from './mail/mail.routes.js';
 
 
 // antes de las rutas y middleware de negocio
@@ -31,6 +32,7 @@ app.use('/api/products', productRouter);
 app.use('/api/product/brands', productBrandRouter);
 app.use('/api/auth', authRoutes);
 app.use('/api/product/classes', productClassRouter);
+app.use('/api', mailRouter);
 
 app.use((_, res) => {
     return res.status(404).send({ message: 'Resource not found' })
