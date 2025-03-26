@@ -10,7 +10,7 @@ export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
-    const client = await DI.clientRepository.findOne({ email });
+    const client = await DI.clientRepository.findOne({ email }, { fields: ['*'] })
 
     if (!client) {
       return res.status(404).json({ message: 'Cliente no encontrado' });
