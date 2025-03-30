@@ -35,7 +35,8 @@ export const login = async (req: Request, res: Response) => {
         id: client.id,
         name: client.name,
         lastname: client.lastname,
-        email: client.email
+        email: client.email,
+        role: client.role 
       }
     });
   } catch (error) {
@@ -60,6 +61,7 @@ export const me = async (req: Request, res: Response) => {
         name: client.name,
         lastname: client.lastname,
         email: client.email,
+        role: client.role
       },
     });
   } catch (error) {

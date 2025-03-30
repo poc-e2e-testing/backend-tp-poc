@@ -34,6 +34,9 @@ export class Client extends BaseEntity{
          @Property({nullable: false})
          dni!: string
 
+         @Property({ nullable: false })
+         role: string = 'client' // puede ser 'client' o 'admin'
+         
          @Property({ nullable: false, hidden: true })
          password!: string; // Password
 
