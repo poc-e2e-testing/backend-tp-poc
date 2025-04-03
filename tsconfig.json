@@ -1,9 +1,8 @@
 {
   "compilerOptions": {
-    "incremental": true,
     "target": "es2020",
     "module": "ES2022",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "sourceMap": true,
     "outDir": "./dist",
     "esModuleInterop": true,
@@ -12,7 +11,10 @@
     "alwaysStrict": true,
     "skipLibCheck": true,
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "baseUrl": "./",
+
+
   },
   "include": ["src/**/*", "c:/Users/Bonan/Trabajo-practico-DSW-UTN/src/cliente/client.ts", "c:/Users/felipefernandez/Trabajo-practico-DSW-UTN/src/orders/order.ts", "src/app.ts"],
   "exclude": ["node_modules"]

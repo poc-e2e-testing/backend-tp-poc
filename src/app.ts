@@ -10,6 +10,13 @@ import {orm, syncSchema} from './shared/db/orm.js';
 import { RequestContext } from '@mikro-orm/core';
 import cors from 'cors';
 import mailRouter from './mail/mail.routes.js';
+import orderRouter from "./order/order.routes.js";
+
+
+console.log("✅ orderRouter cargado correctamente")
+
+
+
 
 
 // antes de las rutas y middleware de negocio
@@ -33,6 +40,7 @@ app.use('/api/product/brands', productBrandRouter);
 app.use('/api/auth', authRoutes);
 app.use('/api/product/classes', productClassRouter);
 app.use('/api', mailRouter);
+app.use('/api/orders', orderRouter)
 
 app.use((_, res) => {
     return res.status(404).send({ message: 'Resource not found' })
@@ -40,6 +48,8 @@ app.use((_, res) => {
 
 //await syncSchema() //never in production. This is for development only
 
-app.listen(3000, () => {
-    console.log('Server is running');
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
 });
+
