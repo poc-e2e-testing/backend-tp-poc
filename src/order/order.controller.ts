@@ -13,14 +13,18 @@ export async function createOrder(req: Request, res: Response) {
 
 
   try {
-    const { name, address, phone, paymentMethod,email, items } = req.body
+    const { name, dni, address, city, postalCode, phone, paymentMethod, email, items } = req.body
+
 
     const order = new Order()
     order.name = name
+    order.dni = dni
     order.address = address
+    order.city = city
+    order.postalCode = postalCode
     order.phone = phone
     order.paymentMethod = paymentMethod
-    order.email = email
+
 
     items.forEach((item: { id: string; quantity: number }) => {
         const orderItem = new OrderItem()

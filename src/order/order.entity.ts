@@ -24,6 +24,16 @@ _id: string = uuidv4()
   @Property()
   createdAt: Date = new Date()
 
+  @Property()
+  dni!: string
+
+  @Property()
+  city!: string
+
+  @Property()
+  postalCode!: string
+
+
   @OneToMany(() => OrderItem, item => item.order, {
     cascade: [Cascade.PERSIST, Cascade.REMOVE]
   })
