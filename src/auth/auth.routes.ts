@@ -15,9 +15,8 @@ router.get('/auth/manage', verifyToken, isAdmin, (req: Request, res: Response) =
   }
 })
 router.post('/login', login);
-router.get('/me', verifyToken, me);
-// 🛡️ Ruta protegida para obtener info del usuario autenticado
-router.get('/me', verifyToken, async (req: Request, res: Response) => {
+
+router.get('/me', verifyToken, me,  async (req: Request, res: Response) => {
   try {
     // @ts-ignore
     const user = req.user;
