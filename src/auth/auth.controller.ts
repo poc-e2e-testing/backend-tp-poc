@@ -23,7 +23,7 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const token = jwt.sign(
-      { id: client.id, email: client.email },
+      { id: client.id, email: client.email, role: client.role },
       JWT_SECRET,
       { expiresIn: '2h' }
     );
@@ -35,8 +35,7 @@ export const login = async (req: Request, res: Response) => {
         id: client.id,
         name: client.name,
         lastname: client.lastname,
-        email: client.email,
-        role: client.role 
+        email: client.email
       }
     });
   } catch (error) {
