@@ -16,7 +16,8 @@ _id: string = uuidv4()
   quantity!: number
 
   @ManyToOne(() => Order)
-  order!: any  // ❗️Evitamos el tipo explícito aquí para romper el ciclo
+  order!: () => any
+
 }
 
 

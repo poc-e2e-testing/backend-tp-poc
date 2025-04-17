@@ -4,17 +4,23 @@ import { Order } from "./order.entity.js"
 import { OrderItem } from "./orderItem.entity.js"
 import { getNextOrderId } from "../shared/db/getNextOrderId.js"
 import { sendOrderEmail } from "../shared/db/sendOrderEmail.js"
-
+import { Product } from "../product/product.entity.js" // Asegurate de tener esta entidad
 
 const em = orm.em
 
 export async function createOrder(req: Request, res: Response) {
-
-
-
   try {
-    const { name, dni, address, city, postalCode, phone, paymentMethod, email, items } = req.body
-
+    const {
+      name,
+      dni,
+      address,
+      city,
+      postalCode,
+      phone,
+      paymentMethod,
+      email,
+      items,
+    } = req.body
 
     const order = new Order()
     order.name = name
@@ -25,20 +31,39 @@ export async function createOrder(req: Request, res: Response) {
     order.phone = phone
     order.paymentMethod = paymentMethod
 
+    const emailItems: {
+      id: string
+      nombre: string
+      precio: number
+      quantity: number
+    }[] = []
 
-    items.forEach((item: { id: string; quantity: number }) => {
-        const orderItem = new OrderItem()
-        orderItem.productId = item.id
-        orderItem.quantity = item.quantity
-        orderItem.order = order
-        order.items.add(orderItem)
-    })
-  
+    for (const item of items) {
+      const product = await em.findOne(Product, { id: item.id })
+
+      if (!product || !product.id) {
+        return res.status(404).json({ message: `Producto con ID ${item.id} no encontrado` })
+      }
+
+      const orderItem = new OrderItem()
+      orderItem.productId = product.id
+
+      orderItem.quantity = item.quantity
+      orderItem.order = order as any
+      order.items.add(orderItem)
+
+      // Armar item para el email
+      emailItems.push({
+        id: product.id!, // 👈 forzamos porque ya chequeamos que `product` existe
+        nombre: product.nombre,
+        precio: Number(product.precio),
+        quantity: item.quantity
+      })
+      
+    }
+
     const nextOrderId = await getNextOrderId()
-    order._id = nextOrderId.toString() // si _id es string, si es number no hace falta
-
-
-  
+    order._id = nextOrderId.toString()
 
     await em.persistAndFlush(order)
 
@@ -47,18 +72,23 @@ export async function createOrder(req: Request, res: Response) {
         orderId: nextOrderId,
         name,
         address,
+        city,
+        postalCode,
         phone,
-        paymentMethod
+        paymentMethod,
+        items: emailItems,
       })
     }
-    
-    
 
     res.status(201).json({
       message: "Orden creada con éxito",
       orderId: nextOrderId,
     })
   } catch (error: any) {
-    res.status(500).json({ message: "Error al crear la orden", error: error.message })
+    console.error("❌ ERROR EN BACKEND AL CREAR ORDEN:", error)
+    res.status(500).json({
+      message: "Error al crear la orden",
+      error: error.message,
+    })
   }
 }

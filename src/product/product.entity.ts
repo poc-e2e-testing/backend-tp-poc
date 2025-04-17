@@ -15,7 +15,7 @@ export class Product extends BaseEntity{
     precio!: string
 
     @Property({nullable: false})
-    stock!: string
+    stock!: number
 
     @ManyToOne(() => ProductBrand, {nullable:false})
     productBrand!: Rel<ProductBrand>

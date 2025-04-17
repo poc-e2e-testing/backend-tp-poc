@@ -11,11 +11,8 @@ import { RequestContext } from '@mikro-orm/core';
 import cors from 'cors';
 import mailRouter from './mail/mail.routes.js';
 import orderRouter from "./order/order.routes.js";
-
-
-
-
-
+import dotenv from "dotenv"
+dotenv.config()
 
 
 
