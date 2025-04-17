@@ -37,6 +37,31 @@ export async function sendOrderEmail(to: string, orderInfo: OrderEmailData) {
 
   const total = orderInfo.items.reduce((acc, item) => acc + item.precio * item.quantity, 0)
 
+  // 🔀 Contenido según método de pago
+  let pagoHtml = ""
+
+  if (orderInfo.paymentMethod === "Transferencia bancaria") {
+    pagoHtml = `
+      <h3>💸 Datos para transferencia</h3>
+      <p>
+        Alias: <strong>don.julio.cafe</strong><br/>
+        CBU: <strong>0000003100031312312345</strong><br/>
+        Banco: Banco Nación<br/>
+        Titular: Don Julio Store S.R.L.
+      </p>
+      <p>Por favor, enviá el comprobante respondiendo este correo o por WhatsApp.</p>
+    `
+  } else if (orderInfo.paymentMethod === "Tarjeta de crédito") {
+    pagoHtml = `
+      <h3>💳 Pago con tarjeta</h3>
+      <p>Hacé clic en el siguiente enlace para completar tu pago:</p>
+      <a href="https://www.mercadopago.com.ar" target="_blank" style="display:inline-block;padding:10px 15px;background:#3483fa;color:#fff;text-decoration:none;border-radius:4px;">
+        Ir al pago en Mercado Pago
+      </a>
+    `
+    //FALTARIA USAR API DE MERCADO PAGO, pero tendria que poner cuenta.
+  }
+
   const html = `
     <h2>Gracias por tu compra, ${orderInfo.name} 🛍️</h2>
     <p>Tu orden <strong>#${orderInfo.orderId}</strong> fue procesada con éxito.</p>
@@ -68,6 +93,7 @@ export async function sendOrderEmail(to: string, orderInfo: OrderEmailData) {
     </p>
 
     <p><strong>Método de pago:</strong> ${orderInfo.paymentMethod}</p>
+    ${pagoHtml}
 
     <p style="margin-top: 20px;">Nos pondremos en contacto pronto con los detalles del envío. ¡Gracias por confiar en Don Julio Store!</p>
     <hr/>
