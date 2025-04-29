@@ -15,10 +15,11 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+
 // Función para enviar correos
 export const sendEmail = async (to: string, subject: string, text: string) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER, // Remitente (tu Gmail)
+    from: `"Don Julio Store" <${process.env.EMAIL_USER}>`, // Remitente (tu Gmail)
     to, // Destinatario (email del usuario)
     subject,
     text,
@@ -33,3 +34,4 @@ export const sendEmail = async (to: string, subject: string, text: string) => {
     return { success: false, message: "Error al enviar el correo" };
   }
 };
+

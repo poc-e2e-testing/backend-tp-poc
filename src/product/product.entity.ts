@@ -22,4 +22,7 @@ export class Product extends BaseEntity{
 
     @ManyToOne(() => ProductClass, { nullable: false})
     productClass!: Rel<ProductClass>
+
+    @Property()
+    imgUrl?: string;
 }
