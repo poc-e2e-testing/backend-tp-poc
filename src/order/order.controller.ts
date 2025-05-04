@@ -45,6 +45,9 @@ export async function createOrder(req: Request, res: Response) {
         return res.status(404).json({ message: `Producto con ID ${item.id} no encontrado` })
       }
 
+      product.stock -= item.quantity
+      em.persist(product)
+
       const orderItem = new OrderItem()
       orderItem.productId = product.id
 
