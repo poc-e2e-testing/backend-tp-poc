@@ -2,6 +2,8 @@ import { MikroORM } from "@mikro-orm/core";
 import { MongoHighlighter } from "@mikro-orm/mongo-highlighter";
 import { MongoEntityManager } from '@mikro-orm/mongodb';
 import { Client } from "../../client/client.entity.js";
+import dotenv from 'dotenv';
+dotenv.config();
 
 
 export const orm = await MikroORM.init({
@@ -9,7 +11,7 @@ export const orm = await MikroORM.init({
   entitiesTs: ['src/**/*.entity.ts'],
   dbName: 'donjulio',
   type: 'mongo',
-  clientUrl: 'mongodb://localhost:27017',
+  clientUrl: process.env.MONGO_URI,
   highlighter: new MongoHighlighter(),
   debug: true,
   schemaGenerator: {
