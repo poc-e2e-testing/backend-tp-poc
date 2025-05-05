@@ -20,9 +20,16 @@ dotenv.config()
 const app = express();
 app.use(express.json());
 
+const allowedOrigins = [
+  'https://frontend-donjulio.onrender.com',
+  'http://localhost:5173',
+  'https://front-end-dsw.vercel.app/'
+];
+
 app.use(cors({
-  origin: 'https://frontend-donjulio.onrender.com', // Permite solicitudes solo desde tu frontend
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], // Los métodos que quieras permitir
+  origin: allowedOrigins,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  credentials: true
 }));
 
 //luego de los middleware base como express.json()
