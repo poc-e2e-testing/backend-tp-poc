@@ -21,7 +21,7 @@ const app = express();
 app.use(express.json());
 
 app.use(cors({
-    origin: 'http://localhost:5173', // Permite solicitudes solo desde tu frontend
+  origin: 'https://frontend-donjulio.onrender.com', // Permite solicitudes solo desde tu frontend
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], // Los métodos que quieras permitir
 }));
 
