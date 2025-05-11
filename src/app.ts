@@ -27,11 +27,13 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: '*',
+  origin: [
+    "http://localhost:5173",
+    "https://front-end-dsw.vercel.app"
+  ],
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   credentials: true
 }));
-
 //luego de los middleware base como express.json()
 app.use((req, res, next) => {
     RequestContext.create(orm.em,next)
