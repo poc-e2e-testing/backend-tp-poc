@@ -13,11 +13,10 @@ interface AuthenticatedRequest extends Request {
 }
 
 export async function createOrder(req: AuthenticatedRequest, res: Response) {
-  const em = orm.em.fork() // ✅ fork para evitar conflictos de contexto en MikroORM
+  const em = orm.em.fork()
 
   try {
     const client = req.user
-
     if (!client || !client.id) {
       return res.status(401).json({ message: "Cliente no autenticado" })
     }
@@ -33,7 +32,14 @@ export async function createOrder(req: AuthenticatedRequest, res: Response) {
       items,
     } = req.body
 
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ message: "La orden no contiene productos" })
+    }
+
     const order = new Order()
+    const nextOrderId = await getNextOrderId()
+    order._id = nextOrderId.toString() // ✅ se asigna antes del Reference.create
+
     order.name = name
     order.dni = dni
     order.address = address
@@ -78,22 +84,23 @@ export async function createOrder(req: AuthenticatedRequest, res: Response) {
       })
     }
 
-    const nextOrderId = await getNextOrderId()
-    order._id = nextOrderId.toString()
-
     await em.persistAndFlush(order)
 
     if (client.email) {
-      await sendOrderEmail(client.email, {
-        orderId: nextOrderId,
-        name,
-        address,
-        city,
-        postalCode,
-        phone,
-        paymentMethod,
-        items: emailItems,
-      })
+      try {
+        await sendOrderEmail(client.email, {
+          orderId: nextOrderId,
+          name,
+          address,
+          city,
+          postalCode,
+          phone,
+          paymentMethod,
+          items: emailItems,
+        })
+      } catch (mailErr) {
+        console.warn("⚠️ Error al enviar el correo:", mailErr)
+      }
     }
 
     res.status(201).json({
@@ -109,21 +116,28 @@ export async function createOrder(req: AuthenticatedRequest, res: Response) {
     })
   }
 }
+
 export async function getOrdersByClient(req: AuthenticatedRequest, res: Response) {
   const em = orm.em.fork()
+
   try {
     const client = req.user
-    if (!client) return res.status(401).json({ message: "No autorizado" })
+    if (!client || !client.id) {
+      return res.status(401).json({ message: "No autorizado" })
+    }
 
     const orders = await em.find(Order, { client: client.id }, {
       populate: ['items'],
       orderBy: { createdAt: 'DESC' }
     })
 
-    return res.status(200).json({ message: 'Órdenes recuperadas', data: orders })
+    return res.status(200).json({
+      message: "Órdenes recuperadas correctamente",
+      data: orders
+    })
+
   } catch (error: any) {
     console.error("❌ Error al obtener órdenes:", error)
     return res.status(500).json({ message: "Error al recuperar órdenes" })
   }
 }
-
