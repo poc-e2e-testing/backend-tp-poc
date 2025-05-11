@@ -32,6 +32,7 @@ app.use(cors({
     "https://front-end-dsw.vercel.app"
   ],
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 }));
 //luego de los middleware base como express.json()
