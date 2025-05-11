@@ -1,13 +1,21 @@
-import { Entity, Property, PrimaryKey, Collection, OneToMany, Cascade } from "@mikro-orm/core"
+import {
+  Entity,
+  Property,
+  PrimaryKey,
+  Collection,
+  OneToMany,
+  Cascade,
+  ManyToOne,
+  Ref
+} from "@mikro-orm/core"
 import { v4 as uuidv4 } from "uuid"
 import { OrderItem } from "./orderItem.entity.js"
+import { Client } from "../client/client.entity.js"
 
 @Entity()
 export class Order {
-  
   @PrimaryKey()
-_id: string = uuidv4()
-
+  _id: string = uuidv4()
 
   @Property()
   name!: string
@@ -33,10 +41,14 @@ _id: string = uuidv4()
   @Property()
   postalCode!: string
 
-
   @OneToMany(() => OrderItem, item => item.order, {
     cascade: [Cascade.PERSIST, Cascade.REMOVE]
   })
   items = new Collection<OrderItem>(this)
-  email: any
+
+  @ManyToOne(() => Client)
+  client!: Ref<Client>
+
+  // @Property()
+  // email!: string
 }

@@ -1,13 +1,10 @@
-
-import { Entity, Property, ManyToOne, PrimaryKey } from "@mikro-orm/core"
-import { v4 as uuidv4 } from "uuid"
+import { Entity, PrimaryKey, Property, ManyToOne, Ref } from "@mikro-orm/core"
 import { Order } from "./order.entity.js"
 
 @Entity()
 export class OrderItem {
   @PrimaryKey()
-_id: string = uuidv4()
-
+  _id!: string
 
   @Property()
   productId!: string
@@ -16,8 +13,5 @@ _id: string = uuidv4()
   quantity!: number
 
   @ManyToOne(() => Order)
-  order!: () => any
-
+  order!: Ref<Order> 
 }
-
-

@@ -4,12 +4,24 @@ import { Order } from "./order.entity.js"
 import { OrderItem } from "./orderItem.entity.js"
 import { getNextOrderId } from "../shared/db/getNextOrderId.js"
 import { sendOrderEmail } from "../shared/db/sendOrderEmail.js"
-import { Product } from "../product/product.entity.js" // Asegurate de tener esta entidad
+import { Product } from "../product/product.entity.js"
+import { Client } from "../client/client.entity.js"
+import { Reference } from "@mikro-orm/core"
 
-const em = orm.em
+interface AuthenticatedRequest extends Request {
+  user?: Client
+}
 
-export async function createOrder(req: Request, res: Response) {
+export async function createOrder(req: AuthenticatedRequest, res: Response) {
+  const em = orm.em.fork() // ✅ fork para evitar conflictos de contexto en MikroORM
+
   try {
+    const client = req.user
+
+    if (!client || !client.id) {
+      return res.status(401).json({ message: "Cliente no autenticado" })
+    }
+
     const {
       name,
       dni,
@@ -18,7 +30,6 @@ export async function createOrder(req: Request, res: Response) {
       postalCode,
       phone,
       paymentMethod,
-      email,
       items,
     } = req.body
 
@@ -30,6 +41,7 @@ export async function createOrder(req: Request, res: Response) {
     order.postalCode = postalCode
     order.phone = phone
     order.paymentMethod = paymentMethod
+    order.client = Reference.create(client)
 
     const emailItems: {
       id: string
@@ -45,24 +57,25 @@ export async function createOrder(req: Request, res: Response) {
         return res.status(404).json({ message: `Producto con ID ${item.id} no encontrado` })
       }
 
+      if (product.stock < item.quantity) {
+        return res.status(400).json({ message: `Stock insuficiente para ${product.nombre}` })
+      }
+
       product.stock -= item.quantity
       em.persist(product)
 
       const orderItem = new OrderItem()
       orderItem.productId = product.id
-
       orderItem.quantity = item.quantity
-      orderItem.order = order as any
+      orderItem.order = Reference.create(order)
       order.items.add(orderItem)
 
-      // Armar item para el email
       emailItems.push({
-        id: product.id!, // 👈 forzamos porque ya chequeamos que `product` existe
+        id: product.id,
         nombre: product.nombre,
         precio: Number(product.precio),
         quantity: item.quantity
       })
-      
     }
 
     const nextOrderId = await getNextOrderId()
@@ -70,8 +83,8 @@ export async function createOrder(req: Request, res: Response) {
 
     await em.persistAndFlush(order)
 
-    if (email) {
-      await sendOrderEmail(email, {
+    if (client.email) {
+      await sendOrderEmail(client.email, {
         orderId: nextOrderId,
         name,
         address,
@@ -87,6 +100,7 @@ export async function createOrder(req: Request, res: Response) {
       message: "Orden creada con éxito",
       orderId: nextOrderId,
     })
+
   } catch (error: any) {
     console.error("❌ ERROR EN BACKEND AL CREAR ORDEN:", error)
     res.status(500).json({
@@ -95,3 +109,21 @@ export async function createOrder(req: Request, res: Response) {
     })
   }
 }
+export async function getOrdersByClient(req: AuthenticatedRequest, res: Response) {
+  const em = orm.em.fork()
+  try {
+    const client = req.user
+    if (!client) return res.status(401).json({ message: "No autorizado" })
+
+    const orders = await em.find(Order, { client: client.id }, {
+      populate: ['items'],
+      orderBy: { createdAt: 'DESC' }
+    })
+
+    return res.status(200).json({ message: 'Órdenes recuperadas', data: orders })
+  } catch (error: any) {
+    console.error("❌ Error al obtener órdenes:", error)
+    return res.status(500).json({ message: "Error al recuperar órdenes" })
+  }
+}
+
