@@ -1,10 +1,12 @@
-import { Entity, PrimaryKey, Property, ManyToOne, Ref } from "@mikro-orm/core"
+import { Entity, Property, PrimaryKey, ManyToOne, Ref } from "@mikro-orm/core"
 import { Order } from "./order.entity.js"
+import crypto from "crypto"
 
 @Entity()
 export class OrderItem {
-  @PrimaryKey()
-  _id!: string
+
+  @PrimaryKey({ name: '_id' })
+  _id: string = crypto.randomUUID() // ✅ importante para MongoDB
 
   @Property()
   productId!: string
@@ -13,5 +15,5 @@ export class OrderItem {
   quantity!: number
 
   @ManyToOne(() => Order)
-  order!: Ref<Order> 
+  order!: Ref<Order>
 }
