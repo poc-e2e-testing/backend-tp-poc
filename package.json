@@ -7,7 +7,8 @@
   "scripts": {
     "build": "tsc -p ./tsconfig.json",
     "start:dev": "tsc-watch --noClear -p ./tsconfig.json --onSuccess \"node ./dist/app.js\"",
-    "start": "tsc-watch --noClear -p ./tsconfig.json --onSuccess \"node ./dist/app.js\""
+    "start": "tsc-watch --noClear -p ./tsconfig.json --onSuccess \"node ./dist/app.js\"",
+    "seed": "pnpm run build && node ./dist/shared/db/seeder.js"
   },
   "keywords": [],
   "author": "",
@@ -35,7 +36,7 @@
     "dotenv": "^16.5.0",
     "express": "4.19.2",
     "jsonwebtoken": "^9.0.2",
-    "multer": "^1.4.5-lts.2",
+    "multer": "2.0.2",
     "node-cleanup": "^2.1.2",
     "nodemailer": "^6.10.0",
     "reflect-metadata": "0.2.2",
