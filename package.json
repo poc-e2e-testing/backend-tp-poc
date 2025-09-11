@@ -8,7 +8,8 @@
     "build": "tsc -p ./tsconfig.json",
     "start:dev": "tsc-watch --noClear -p ./tsconfig.json --onSuccess \"node ./dist/app.js\"",
     "start": "tsc-watch --noClear -p ./tsconfig.json --onSuccess \"node ./dist/app.js\"",
-    "seed": "pnpm run build && node ./dist/shared/db/seeder.js"
+    "seed": "pnpm run build && node ./dist/shared/db/seeder.js",
+    "start:test": "cross-env NODE_ENV=test MONGO_URI=mongodb://localhost:27017/mi-db-de-pruebas pnpm run seed && pnpm run start"
   },
   "keywords": [],
   "author": "",
