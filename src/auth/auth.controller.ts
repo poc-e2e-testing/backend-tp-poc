@@ -10,7 +10,10 @@ export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
-    const client = await DI.clientRepository.findOne({ email }, { fields: ['*'] });
+    const client = await DI.clientRepository.findOne(
+      { email },
+      { fields: ['*'] }
+    );
 
     if (!client) {
       return res.status(404).json({ message: 'Cliente no encontrado' });
@@ -31,13 +34,14 @@ export const login = async (req: Request, res: Response) => {
     return res.status(200).json({
       message: 'Login exitoso',
       token,
-      user: {  // 🔥 antes decía "client"
+      user: {
+        // antes decía "client"
         id: client.id,
         name: client.name,
         lastname: client.lastname,
         email: client.email,
-        role: client.role
-      }
+        role: client.role,
+      },
     });
   } catch (error) {
     console.error('Error en login:', error);
@@ -61,7 +65,7 @@ export const me = async (req: Request, res: Response) => {
         name: client.name,
         lastname: client.lastname,
         email: client.email,
-        role: client.role
+        role: client.role,
       },
     });
   } catch (error) {
