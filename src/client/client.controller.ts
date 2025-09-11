@@ -4,7 +4,6 @@ import { orm } from '../shared/db/orm.js';
 import { DI } from '../shared/db/orm.js';
 import bcrypt from 'bcryptjs';
 
-
 const em = orm.em;
 
 function sanitizeClientInput(req: Request, res: Response, next: NextFunction) {
@@ -20,7 +19,7 @@ function sanitizeClientInput(req: Request, res: Response, next: NextFunction) {
     postalCode: req.body.postalCode,
     dni: req.body.dni,
     clientClass: req.body.clientClass,
-     password: req.body.password,
+    password: req.body.password,
   };
 
   Object.keys(req.body.sanitizedInput).forEach((key) => {
@@ -33,21 +32,21 @@ function sanitizeClientInput(req: Request, res: Response, next: NextFunction) {
 
 async function findAll(req: Request, res: Response) {
   try {
-    const clients = await em.find(
-      Client,
-      {},
-      { populate: ['clientClass'] }
-    )
-    res.status(200).json({ message: 'found all clients', data: clients })
+    const clients = await em.find(Client, {}, { populate: ['clientClass'] });
+    res.status(200).json({ message: 'found all clients', data: clients });
   } catch (error: any) {
-    res.status(500).json({ message: error.message })
+    res.status(500).json({ message: error.message });
   }
 }
 
 async function findOne(req: Request, res: Response) {
   try {
     const id = req.params.id;
-    const client = await em.findOneOrFail(Client, { id }, { populate: ['clientClass'] });
+    const client = await em.findOneOrFail(
+      Client,
+      { id },
+      { populate: ['clientClass'] }
+    );
     res.status(200).json({ message: 'found client', data: client });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
@@ -76,10 +75,13 @@ async function add(req: Request, res: Response) {
     client.postalCode = data.postalCode;
     client.dni = data.dni;
 
-    // ✅ NO volver a hashear acá
+    // NO volver a hashear acá
     client.password = data.password;
 
-    client.clientClass = await DI.em.findOneOrFail('ClientClass', data.clientClass);
+    client.clientClass = await DI.em.findOneOrFail(
+      'ClientClass',
+      data.clientClass
+    );
 
     await DI.em.persistAndFlush(client);
 
@@ -88,16 +90,16 @@ async function add(req: Request, res: Response) {
       data: {
         id: client.id,
         email: client.email,
-        name: client.name
-      }
+        name: client.name,
+      },
     });
   } catch (error) {
     console.error('Error al crear cliente:', error);
-    return res.status(500).json({ message: 'Error del servidor al crear cliente' });
+    return res
+      .status(500)
+      .json({ message: 'Error del servidor al crear cliente' });
   }
 }
-
-
 
 async function update(req: Request, res: Response) {
   try {

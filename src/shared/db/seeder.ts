@@ -122,18 +122,18 @@ async function seed() {
     em.persist([product1, product2]);
     await em.flush();
 
-    console.log('✅ Seeding completado exitosamente');
+    console.log('Seeding completado exitosamente');
     console.log(
-      '🧹 Colecciones limpiadas: OrderItem, Order, Product, Client, Category, ProductBrand, ProductClass, CategoryType, ClientClass'
+      'Colecciones limpiadas: OrderItem, Order, Product, Client, Category, ProductBrand, ProductClass, CategoryType, ClientClass'
     );
-    console.log('📊 Datos creados:');
+    console.log('Datos creados:');
     console.log('   - 2 ProductBrands');
     console.log('   - 3 ProductClasses');
     console.log('   - 2 ClientClasses');
     console.log('   - 2 Clients (1 admin, 1 cliente)');
     console.log('   - 2 Products');
   } catch (error) {
-    console.error('❌ Error durante el seeding:', error);
+    console.error('Error durante el seeding:', error);
     throw error;
   } finally {
     await orm.close();

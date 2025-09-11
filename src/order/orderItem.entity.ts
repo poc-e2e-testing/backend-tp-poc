@@ -1,19 +1,18 @@
-import { Entity, Property, PrimaryKey, ManyToOne, Ref } from "@mikro-orm/core"
-import { Order } from "./order.entity.js"
-import crypto from "crypto"
+import { Entity, Property, PrimaryKey, ManyToOne, Ref } from '@mikro-orm/core';
+import { Order } from './order.entity.js';
+import crypto from 'crypto';
 
 @Entity()
 export class OrderItem {
-
   @PrimaryKey({ name: '_id' })
-  _id: string = crypto.randomUUID() // ✅ importante para MongoDB
+  _id: string = crypto.randomUUID(); // importante para MongoDB
 
   @Property()
-  productId!: string
+  productId!: string;
 
   @Property()
-  quantity!: number
+  quantity!: number;
 
   @ManyToOne(() => Order)
-  order!: Ref<Order>
+  order!: Ref<Order>;
 }
