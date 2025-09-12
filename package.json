@@ -8,7 +8,7 @@
     "build": "tsc -p ./tsconfig.json",
     "start:dev": "cross-env NODE_ENV=development tsc-watch --noClear -p ./tsconfig.json --onSuccess \"node ./dist/app.js\"",
     "start": "tsc-watch --noClear -p ./tsconfig.json --onSuccess \"node ./dist/app.js\"",
-    "start:test": "cross-env NODE_ENV=test tsc-watch --noClear -p ./tsconfig.json --onSuccess \"node ./dist/shared/db/seeder.js && node ./dist/app.js\"",
+    "start:test": "cross-env NODE_ENV=test pnpm run seed:test && cross-env NODE_ENV=test tsc-watch --noClear -p ./tsconfig.json --onSuccess \"node ./dist/app.js\"",
     "seed": "pnpm run build && node ./dist/shared/db/seeder.js",
     "seed:test": "cross-env NODE_ENV=test pnpm run build && node ./dist/shared/db/seeder.js"
   },
