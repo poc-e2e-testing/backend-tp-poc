@@ -1,4 +1,4 @@
-# Configuración del Servidor
+# Configuración del Servidor <small>[⬅️ Volver al README Principal](README.md)</small>
 
 ## Instalación
 
